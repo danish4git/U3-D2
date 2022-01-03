@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .items {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .items > div {
+        width: 300px;
+        margin: 10px;
+        box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+      }
+      .items > div > img {
+        width: 100%;
+      }
+      .items > div > h4,
+      p {
+        margin-left: 20px;
+      }
+      .items > div > div {
+        display: flex;
+        justify-content: space-between;
+      }
+      .nav {
+        background-color: coral;
+
+        padding: 20px;
+        display: flex;
+        justify-content: end;
+        font-size: 20px;
+        color: white;
+      }
+      .allitem {
+        font-size: 20px;
+        color: white;
+        background-color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="nav" onclick="fun()">
+      <div>cart item</div>
+      <div class="allitem"></div>
+    </div>
+    <div class="items"></div>
+  </body>
+</html>
+
+<script>
+  var cart = JSON.parse(localStorage.getItem("cartitem")) || [];
+  //   var url = "https://www.themealdb.com/api/json/v1/1/list.php?c=lis";
+  var url = "https://www.themealdb.com/api/json/v1/1/search.php?s=chicken";
+
+  async function showdata() {
+    let res = await fetch(url);
+    let data = await res.json();
+    let datas = data.meals;
+    console.log(datas);
+    dishes(datas);
+  }
+
+  showdata();
+
+  function dishes(arr) {
+    arr.map(function (el) {
+      let name = document.createElement("h4");
+      let price = document.createElement("p");
+      let div = document.createElement("div");
+      div1 = document.createElement("div");
+      let img = document.createElement("img");
+      let btn = document.createElement("button");
+      btn.textContent = "Add to Cart";
+
+      price.textContent = Math.floor(Math.random() * (500 - 100 + 100));
+      div1.append(price, btn);
+      img.src = el.strMealThumb;
+      name.textContent = el.strMeal;
+      div.append(img, name, div1);
+      document.querySelector(".items").append(div);
+
+      btn.addEventListener("click", addtocart);
+
+      function addtocart() {
+        let obj = {
+          name: el.strMeal,
+          img: el.strMealThumb,
+          price: Math.floor(Math.random() * (500 - 100 + 100)),
+        };
+        cart.push(obj);
+
+        localStorage.setItem("cartitem", JSON.stringify(cart));
+        callitem();
+      }
+    });
+  }
+  function callitem() {
+    document.querySelector(".allitem").textContent = "";
+    document.querySelector(".allitem").textContent = cart.length;
+  }
+
+  function fun() {
+    window.location.href = "cart.html";
+  }
+
+  callitem();
+</script>
